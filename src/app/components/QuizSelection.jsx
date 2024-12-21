@@ -5,14 +5,14 @@ import { nhost } from '../lib/nhost'
 
 const getQuiz = `
   query {
-	questions {
-	  question
-	  id
-	  answers {
-		answer
-		id
-	  }
-	}
+    questions {
+      question
+      id
+      answers {
+        answer
+        id
+      }
+    }
   }
 `;
 
@@ -34,45 +34,51 @@ function QuizHome() {
 	  setLoading(true);
 	  const { data, error } = await nhost.graphql.request(getQuiz);
 
+    // console.log(data.questions);
 	  setQuestions(data.questions);
-	  setAnswers(data.questions.answers);
+	  setAnswers(data.questions);
 	  setLoading(false);
 	}
 
 	fetchQuestions();
   }, []);
 
+  const quizAnswers = answers.map((a) => {
+    const answerList = a.answers.map((answer) => answer.answer);
+    const answerId = a.answers.map((answer) => answer.id);
+    return (
+      <li key={answerId}>{answerList}</li>
+    )
+  })
+
+  const quizQuestions = questions.map((question) => {
+    return (
+      <li key={question.id}>Quiz: {question.question}</li>
+    )
+  })
+
+
   return (
-	<main>
-	  <article>
-		<section>
-		  <h1>Quiz Game App</h1>
-		  <h2>Rules</h2>
-		  <p>Have fun to play with anyone! Choose correct answers to score high and brag about it!</p>
-		</section>
-		  
-		<section>
-		  {loading ? (
-			<p>Loading...</p>
-		  ) : (
-			<ul>
-			  {questions.map((singleQuestion, index) => (
-				<>
-				  <li key={singleQuestion.id}>Q: {singleQuestion.question}</li>
-				  {singleQuestion.answers.map((singleAnswer) => {
-					return (
-					  <>
-						<li key={singleAnswer.id}>{singleAnswer.answer}</li>
-					  </>
-					)
-				  })}
-				</>
-			  ))}
-			</ul>
-		  )}
-		</section>
-	  </article>
-	</main>
+    <main>
+      <article>
+        <section>
+          <h1>Quiz Game App</h1>
+          <h2>Rules</h2>
+          <p>Have fun to play with anyone! Choose correct answers to score high and brag about it!</p>
+        </section>
+          
+        <section>
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+          <ul>
+            {quizQuestions}
+            {quizAnswers}
+          </ul>
+          )}
+        </section>
+      </article>
+    </main>
   );
 }
 
