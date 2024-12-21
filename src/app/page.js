@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 import { NhostProvider } from "@nhost/nextjs";
 import { nhost } from './lib/nhost'
 
-const getQuestions = `
+const getQuiz = `
   query {
     questions {
       question
+      id
       answers {
         answer
+        id
       }
     }
   }
@@ -25,13 +27,15 @@ function App() {
 function Home() {
   const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState([]);
 
   useEffect(() => {
     async function fetchQuestions() {
       setLoading(true);
-      const { data, error } = await nhost.graphql.request(getQuestions);
+      const { data, error } = await nhost.graphql.request(getQuiz);
 
       setQuestions(data.questions);
+      setAnswers(data.questions.answers);
       setLoading(false);
     }
 
@@ -53,9 +57,16 @@ function Home() {
           ) : (
             <ul>
               {questions.map((singleQuestion, index) => (
-                <li key={index}>
-                  <p>Q: {singleQuestion.question}</p>
-                </li>
+                <>
+                  <li key={singleQuestion.id}>Q: {singleQuestion.question}</li>
+                  {singleQuestion.answers.map((singleAnswer) => {
+                    return (
+                      <>
+                        <li key={singleAnswer.id}>{singleAnswer.answer}</li>
+                      </>
+                    )
+                  })}
+                </>
               ))}
             </ul>
           )}
