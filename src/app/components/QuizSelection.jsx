@@ -42,8 +42,12 @@ function QuizHome() {
   const [answers, setAnswers] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [score, setScore] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [players, setPlayers] = useState([
+    { name: 'Player 1', score: 0 },
+    { name: 'Player 2', score: 0 },
+  ]);
+  const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
 
   useEffect(() => {
     async function fetchQuestions() {
@@ -64,10 +68,14 @@ function QuizHome() {
   const currentQuestion = questions[currentQuestionIndex];
   const currentQuizInfo = answers[currentQuestionIndex];
   const correctAnswer = rightAnswers[currentQuestionIndex].correctAnswer;
+  const currentPlayer = players[currentPlayerIndex];
 
   const handleSubmitAnswer = () => {
     if (selectedAnswer === correctAnswer) {
-      setScore(score + 1);
+      const updatedPlayers = [...players];
+      updatedPlayers[currentPlayerIndex].score += 1;
+
+      setPlayers(updatedPlayers);
     }
 
     if (currentQuestionIndex < questions.length - 1) {
@@ -76,13 +84,18 @@ function QuizHome() {
     } else {
       setQuizCompleted(true);
     }
+    setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % players.length);
   };
 
   if (quizCompleted) {
     return (
       <div>
         <h2>Quiz Completed!</h2>
-        <p>Your score: {score} / {questions.length}</p>
+        {players.map((player, index) => (
+          <p key={index}>
+            {player.name}: {player.score} / {questions.length}
+          </p>
+        ))}
       </div>
     );
   }
@@ -94,6 +107,7 @@ function QuizHome() {
       ) : (
       <div>
         <h2>Quiz: {currentQuestion.question}</h2>
+        <p>Player: {currentPlayer.name}</p>
           <div>
             {currentQuizInfo.answers.map((a) => (
               <label key={a.id}>
