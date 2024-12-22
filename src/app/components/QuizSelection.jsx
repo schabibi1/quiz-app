@@ -48,6 +48,7 @@ function QuizHome() {
     { name: 'Player 2', score: 0 },
   ]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
+  // const [userAnswers, setUserAnswers] = useState([]);
 
   useEffect(() => {
     async function fetchQuestions() {
@@ -70,22 +71,61 @@ function QuizHome() {
   const correctAnswer = rightAnswers[currentQuestionIndex].correctAnswer;
   const currentPlayer = players[currentPlayerIndex];
 
-  const handleSubmitAnswer = () => {
+  const handleSubmitAnswer = async () => {
     if (selectedAnswer === correctAnswer) {
       const updatedPlayers = [...players];
+      console.log(updatedPlayers);
+      
       updatedPlayers[currentPlayerIndex].score += 1;
 
       setPlayers(updatedPlayers);
     }
+
+    // // store user answers in the userAnswers state
+    // setUserAnswers([
+    //   ...userAnswers,
+    //   { question_id: currentQuestion.question_id, answer_id: selectedAnswer },
+    // ]);
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedAnswer(null);
     } else {
       setQuizCompleted(true);
+      // setLoading(true);
+      // // send all answers to serverless function
+      // await evaluateAnswers(userAnswers);
     }
     setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % players.length);
   };
+
+  // // CHECK: Expired token?
+  // const evaluateAnswers = async (answers) => {
+  //   try {
+  //     const response = await fetch('https://nemoeuuycytnxxdtqnlg.functions.eu-central-1.nhost.run/v1/evaluate', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         solutions: answers,
+  //       }),
+  //     });
+
+  //     const data = await response.json();
+  //     console.log('Response:', data);
+
+  //     // Update players' scores based on the server's response
+  //     const updatedPlayersData = [...players];
+  //     updatedPlayersData[currentPlayerIndex].score = data.score;
+  //     setPlayers(updatedPlayersData);
+  //     setQuizCompleted(true);
+  //   } catch (error) {
+  //     console.error('Error sending answers:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   if (quizCompleted) {
     return (
@@ -122,8 +162,8 @@ function QuizHome() {
               </label>
             ))}
           </div>
-        <button onClick={handleSubmitAnswer} disabled={!selectedAnswer}>
-          Next
+        <button onClick={handleSubmitAnswer} disabled={!selectedAnswer || loading}>
+          {loading ? 'Submitting...' : 'Next'}
         </button>
       </div>
       )}
