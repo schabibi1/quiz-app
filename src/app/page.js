@@ -5,6 +5,9 @@ function App() {
   return (
     <main>
       <article>
+      <h1 className="text-3xl font-bold underline">
+        👋👋👋👋
+      </h1>
         <section>
           <h1>Quiz Game App</h1>
           <h2>Rules</h2>
