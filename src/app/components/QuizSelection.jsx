@@ -62,11 +62,11 @@ function QuizHome() {
   };
 
   const currentQuestion = questions[currentQuestionIndex];
-  const currentOptions = answers[currentQuestionIndex];
-  const currentAnswer = rightAnswers[currentQuestionIndex].correctAnswer;
-  
+  const currentQuizInfo = answers[currentQuestionIndex];
+  const correctAnswer = rightAnswers[currentQuestionIndex].correctAnswer;
+
   const handleSubmitAnswer = () => {
-    if (selectedAnswer === currentAnswer) {
+    if (selectedAnswer === correctAnswer) {
       setScore(score + 1);
     }
 
@@ -88,44 +88,32 @@ function QuizHome() {
   }
 
   return (
-    <main>
-      <article>
-        <section>
-          <h1>Quiz Game App</h1>
-          <h2>Rules</h2>
-          <p>Have fun to play with anyone! Choose correct answers to score high and brag about it!</p>
-        </section>
-          
-        <section>
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
+    <section>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+      <div>
+        <h2>Quiz: {currentQuestion.question}</h2>
           <div>
-            <h2>{currentQuestion.question}</h2>
-              <div>
-                {currentOptions.answers.map((a) => {
-                  return (
-                    <label key={a.id}>
-                      <input
-                        type="radio"
-                        name="answer"
-                        value={currentOptions.answers.map((a) => a.answer)}
-                        checked={selectedAnswer === currentOptions.answers.map((a) => a.answer)}
-                        onChange={() => handleAnswerSelect(currentOptions.answers.map((a) => a.answer))}
-                      />
-                      {a.answer}
-                    </label>
-                  )
-                })}
-              </div>
-            <button onClick={handleSubmitAnswer} disabled={!selectedAnswer}>
-              Next
-            </button>
+            {currentQuizInfo.answers.map((a) => (
+              <label key={a.id}>
+                <input
+                  type="radio"
+                  name="answer"
+                  value={a.answer}
+                  checked={selectedAnswer === a.answer}
+                  onChange={() => handleAnswerSelect(a.answer)}
+                />
+                {a.answer}
+              </label>
+            ))}
           </div>
-          )}
-        </section>
-      </article>
-    </main>
+        <button onClick={handleSubmitAnswer} disabled={!selectedAnswer}>
+          Next
+        </button>
+      </div>
+      )}
+    </section>
   );
 }
 
