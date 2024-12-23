@@ -99,7 +99,6 @@ function QuizHome() {
     setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % players.length);
   };
 
-  // // CHECK: Expired token?
   // const evaluateAnswers = async (answers) => {
   //   try {
   //     const response = await fetch('https://nemoeuuycytnxxdtqnlg.functions.eu-central-1.nhost.run/v1/evaluate', {
