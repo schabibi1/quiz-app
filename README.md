@@ -2,7 +2,7 @@
 A multiplayer quiz app powered by nhost, Next.js and AWS Lambda.
 Two players can play on the same machine's browser to answer by taking turns. Scores will display when all answers were selected.
 
-![Screenshot of the quiz app](https://asset.cloudinary.com/dsmeebz8b/c121b3f774927fc06fe4211e8c6da115)
+![Screenshot of the quiz app](./assets/quiz-app.png)
 
 ## Prerequisite environment
 - npm: 10.8.2
@@ -36,8 +36,8 @@ npm run dev
 
 ## Requirements Achievement
 - [x] Use Next.js
-- [x] https://github.com/schabibi1/nhost-quiz-app/pull/1
-- [x] https://github.com/schabibi1/nhost-quiz-app/pull/2
+- [x] https://github.com/schabibi1/nhost-quiz-app/pull/1 Fundamental quiz feature with score count
+- [x] https://github.com/schabibi1/nhost-quiz-app/pull/2 Multiplayer mode
 - [x] Local multiplayer mode on a single machine
 - [x] Use nhost SDK to fetch data (GET, dedicated subdomain and the region. Utilize GraphQL playground.)
 - [x] Track each player's score & display it on the UI
