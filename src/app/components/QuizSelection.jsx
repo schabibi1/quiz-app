@@ -130,10 +130,13 @@ function QuizHome() {
   if (quizCompleted) {
     return (
       <div>
-        <h2>Quiz Completed!</h2>
+        <h2 className="text-2xl font-semibold text-white my-6">Quiz Completed!</h2>
         {players.map((player, index) => (
-          <p key={index}>
-            {player.name}: {player.score} / {questions.length}
+          <p
+            key={index}
+            className="text-xl font-semibold text-white/60"
+          >
+            {player.name}: {player.score} out of {questions.length}
           </p>
         ))}
       </div>
@@ -143,14 +146,14 @@ function QuizHome() {
   return (
     <section>
       {loading ? (
-        <p>Loading...</p>
+        <p className="text-xl font-semibold text-white/60">Loading...</p>
       ) : (
-      <div className="flex flex-col space-y-4 w-full">
-        <p className="text-xl text-white/60">Player: {currentPlayer.name}</p>
-        <h2 className="text-2xl text-white">{currentQuestion.question}</h2>
+      <div className="flex flex-col space-y-4 w-full mb-8">
+        <p className="text-xl font-semibold text-white/60">Player: {currentPlayer.name}</p>
+        <h2 className="text-2xl font-semibold text-white my-6">{currentQuestion.question}</h2>
           <div className="flex flex-col space-y-4 w-full">
             {currentQuizInfo.answers.map((a) => (
-              <label className="flex items-center w-full py-4 pl-5 m-2 ml-0 space-x-2 border-2 cursor-pointer border-white/10 rounded-xl bg-white/5" key={a.id}>
+              <label className="flex items-center w-full py-4 pl-5 ml-0 space-x-2 border-2 cursor-pointer border-white/10 rounded-xl bg-white/5 hover:bg-white/15" key={a.id}>
                 <input
                   type="radio"
                   name="answer"
@@ -166,7 +169,7 @@ function QuizHome() {
         <button
           onClick={handleSubmitAnswer}
           disabled={!selectedAnswer || loading}
-          className="w-full py-3 bg-indigo-500/75 rounded-lg"
+          className={!selectedAnswer ? "w-full py-3 bg-indigo-500/75 rounded-lg font-semibold my-6" : "w-full py-3 bg-indigo-500/75 hover:bg-indigo-500 rounded-lg font-semibold my-6"}
         >
           {loading ? 'Submitting...' : 'Next'}
         </button>
