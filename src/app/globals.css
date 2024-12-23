@@ -39,6 +39,19 @@ a {
   text-decoration: none;
 }
 
+label {
+  background-color: slategray;
+  padding: .5rem;
+  border-radius: .2rem;
+  cursor: pointer;
+}
+
+input {
+  position: fixed;
+  opacity: 0;
+  pointer-events: none;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

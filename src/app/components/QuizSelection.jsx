@@ -145,24 +145,29 @@ function QuizHome() {
       {loading ? (
         <p>Loading...</p>
       ) : (
-      <div>
-        <h2>Quiz: {currentQuestion.question}</h2>
-        <p>Player: {currentPlayer.name}</p>
-          <div>
+      <div className="flex flex-col space-y-4 w-full">
+        <p className="text-xl text-white/60">Player: {currentPlayer.name}</p>
+        <h2 className="text-2xl text-white">{currentQuestion.question}</h2>
+          <div className="flex flex-col space-y-4 w-full">
             {currentQuizInfo.answers.map((a) => (
-              <label key={a.id}>
+              <label className="flex items-center w-full py-4 pl-5 m-2 ml-0 space-x-2 border-2 cursor-pointer border-white/10 rounded-xl bg-white/5" key={a.id}>
                 <input
                   type="radio"
                   name="answer"
                   value={a.answer}
                   checked={selectedAnswer === a.answer}
                   onChange={() => handleAnswerSelect(a.answer)}
+                  className="w-6 h-6"
                 />
                 {a.answer}
               </label>
             ))}
           </div>
-        <button onClick={handleSubmitAnswer} disabled={!selectedAnswer || loading}>
+        <button
+          onClick={handleSubmitAnswer}
+          disabled={!selectedAnswer || loading}
+          className="w-full py-3 bg-indigo-500/75 rounded-lg"
+        >
           {loading ? 'Submitting...' : 'Next'}
         </button>
       </div>
