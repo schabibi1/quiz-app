@@ -1,5 +1,5 @@
 'use client'
-import QuizSelection from "./components/QuizSelection"
+import Quiz from "./quiz/page"
 
 function App() {
   return (
@@ -9,7 +9,7 @@ function App() {
           <h1 className="text-center text-5xl font-black my-6">Quiz Game App</h1>
           <p className="text-center text-xl font-semibold text-white/60">Take turns to choose correct answers to score high!</p>
         </section>
-        <QuizSelection />
+        <Quiz />
       </article>
     </main>
   )

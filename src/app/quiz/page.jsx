@@ -28,14 +28,7 @@ const rightAnswers = [
   {correctAnswer: "12 742 km"},
 ];
 
-// const fetchStatus = async () => {
-//   const response = await fetch('/api/evaluate');
-//   const data = await response.json();
-//   return console.log(data);
-// }
-// fetchStatus();
-
-function QuizSelection() {
+function Quiz() {
   return (
 	<NhostProvider nhost={nhost}>
 	  <QuizHome />
@@ -88,50 +81,14 @@ function QuizHome() {
       setPlayers(updatedPlayers);
     }
 
-    // // store user answers in the userAnswers state
-    // setUserAnswers([
-    //   ...userAnswers,
-    //   { question_id: currentQuestion.question_id, answer_id: selectedAnswer },
-    // ]);
-
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedAnswer(null);
     } else {
       setQuizCompleted(true);
-      // setLoading(true);
-      // // send all answers to serverless function
-      // await evaluateAnswers(userAnswers);
     }
     setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % players.length);
   };
-
-  // const evaluateAnswers = async (answers) => {
-  //   try {
-  //     const response = await fetch('https://nemoeuuycytnxxdtqnlg.functions.eu-central-1.nhost.run/v1/evaluate', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         solutions: answers,
-  //       }),
-  //     });
-
-  //     const data = await response.json();
-  //     console.log('Response:', data);
-
-  //     // Update players' scores based on the server's response
-  //     const updatedPlayersData = [...players];
-  //     updatedPlayersData[currentPlayerIndex].score = data.score;
-  //     setPlayers(updatedPlayersData);
-  //     setQuizCompleted(true);
-  //   } catch (error) {
-  //     console.error('Error sending answers:', error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   if (quizCompleted) {
     return (
@@ -185,4 +142,4 @@ function QuizHome() {
   );
 }
 
-export default QuizSelection;
+export default Quiz;
