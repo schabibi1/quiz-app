@@ -28,6 +28,13 @@ const rightAnswers = [
   {correctAnswer: "12 742 km"},
 ];
 
+// const fetchStatus = async () => {
+//   const response = await fetch('/api/evaluate');
+//   const data = await response.json();
+//   return console.log(data);
+// }
+// fetchStatus();
+
 function QuizSelection() {
   return (
 	<NhostProvider nhost={nhost}>
