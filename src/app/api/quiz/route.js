@@ -9,8 +9,11 @@ const GET = async () => {
 const POST = async (req) => {
   const requestData = await req.json();
   console.log('requestData is ', requestData);
-  return NextResponse.json({ message: 'quiz test' });
-  
+  const { question_id, answer_id } = requestData
+  return NextResponse.json(
+    { message: 'POST test' },
+    { question_id, answer_id }
+  );
 }
 
 export { GET, POST };
