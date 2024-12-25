@@ -16,24 +16,16 @@ const getQuiz = `
   }
 `;
 
-// Static answers for temporary testing
-// const rightAnswers = [
-//   {correctAnswer: "8"},
-//   {correctAnswer: "50"},
-//   {correctAnswer: "The Return of the King"},
-//   {correctAnswer: "Africa"},
-//   {correctAnswer: "Canberra"},
-//   {correctAnswer: "25"},
-//   {correctAnswer: "118"},
-//   {correctAnswer: "12 742 km"},
-// ];
-
-const initState = [
+const initRequestState = [
   {
     question_id: "",
     answer_id: "",
   }
 ]
+
+const initScoreState = {
+  score: 0,
+}
 
 function Quiz() {
   return (
@@ -55,17 +47,18 @@ function QuizHome() {
     { name: 'Player 2', score: 0 },
   ]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
-  const [requestData, setRequestData] = useState(initState);
+  const [requestData, setRequestData] = useState(initRequestState);
+  const [scores, setScores] = useState(initScoreState);
 
   useEffect(() => {
     async function fetchQuestions() {
       setLoading(true);
 
-      const { data, error } = await nhost.graphql.request(getQuiz);
+      const { data } = await nhost.graphql.request(getQuiz);
       setQuestions(data.questions);
       setAnswers(data.questions);
       setLoading(false);
-    }
+    };
     fetchQuestions();
   }, []);
 
@@ -78,25 +71,26 @@ function QuizHome() {
   // const correctAnswer = rightAnswers[currentQuestionIndex].correctAnswer;
   const currentPlayer = players[currentPlayerIndex];
 
-  // // ⬇️ Commented out to test handleSubmit
-  // const handleSubmitAnswer = async () => {
-  //   if (selectedAnswer === correctAnswer) {
-  //     const updatedPlayers = [...players];
-  //     console.log(updatedPlayers);
-      
-  //     updatedPlayers[currentPlayerIndex].score += 1;
+  const handleSubmitAnswer = async () => {
+    console.log('selectedAnswer: ', selectedAnswer);
+    
+    if (selectedAnswer !== null) {// 🚨 Review this condition
+      const updatedPlayers = [...players];
+      // updatedPlayers[currentPlayerIndex].score += 1;
+      updatedPlayers[currentPlayerIndex].score = scores.score;
+      setPlayers(updatedPlayers);
+      setScores(scores.score);// Not nutating scores
+      console.log('scores: ', scores);// TODO: Mutate scores
+    }
 
-  //     setPlayers(updatedPlayers);
-  //   }
-
-  //   if (currentQuestionIndex < questions.length - 1) {
-  //     setCurrentQuestionIndex(currentQuestionIndex + 1);
-  //     setSelectedAnswer(null);
-  //   } else {
-  //     setQuizCompleted(true);
-  //   }
-  //   setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % players.length);
-  // };
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setSelectedAnswer(null);
+    } else {
+      setQuizCompleted(true);
+    }
+    setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % players.length);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -106,30 +100,27 @@ function QuizHome() {
     const res = await fetch('http://localhost:3000/api/quiz', {
       method: 'POST',
       headers: {
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ requestData }),
+      body: JSON.stringify([requestData]),
     });
-
-    // Returns the NextResponse.json() reponse from the POST route
+    // returns the NextResponse.json() reponse from the POST route
     const result = await res.json();
-    console.log(result);
+    console.log('result: ', result);
   }
 
   const handleChange = (e) => {
     e.preventDefault();
-
     setRequestData((prevData) => {
-      // TODO: Change input value -> answer ID
-      // ✔️ Replacing existing element to mutate the original answer_id
+      // Replacing existing element to mutate the original answer_id
       prevData.splice(0, 1, {
-        question_id: '',
+        question_id: currentQuestion.id,
         answer_id: e.target.value
       });
       console.log('...prevData: ', ...prevData);
-      
       return { ...prevData };
-    })
+    });
   };
 
   if (quizCompleted) {
@@ -141,6 +132,7 @@ function QuizHome() {
             key={index}
             className="text-xl font-semibold text-white/60"
           >
+            {/* Update player.score (i.e. scores.score) */}
             {player.name}: {player.score} out of {questions.length}
           </p>
         ))}
@@ -161,12 +153,11 @@ function QuizHome() {
               <label className="flex items-center w-full py-4 pl-5 ml-0 space-x-2 border-2 cursor-pointer border-white/10 rounded-xl bg-white/5 hover:bg-white/15" key={a.id}>
                 <input
                   type="radio"
-                  name="answer"
-                  // TODO: Change value to answer ID i.e. -> a.id
-                  value={a.answer}
-                  checked={selectedAnswer === a.answer}
-                  onChange={() => handleAnswerSelect(a.answer)}
-                  onClick = {handleChange}
+                  name="answer_id"
+                  value={a.id}
+                  checked={selectedAnswer === a.id}
+                  onChange={() => handleAnswerSelect(a.id)}
+                  onClick={handleChange}
                   className="w-6 h-6"
                 />
                 {a.answer}
@@ -174,8 +165,8 @@ function QuizHome() {
             ))}
           </div>
         <button
-          // onClick={handleSubmitAnswer}
-          onClick={handleSubmit}
+          onSubmit={handleSubmit}
+          onClick={handleSubmitAnswer}
           disabled={!selectedAnswer || loading}
           className={!selectedAnswer ? "w-full py-3 bg-indigo-500/75 rounded-lg font-semibold my-6" : "w-full py-3 bg-indigo-500/75 hover:bg-indigo-500 rounded-lg font-semibold my-6"}
         >
