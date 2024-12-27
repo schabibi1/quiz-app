@@ -1,15 +1,58 @@
-import { useState } from 'react';
+'use client'
+import { useEffect, useState } from 'react';
+import { NhostProvider } from "@nhost/nextjs";
+import { nhost } from '../lib/nhost'
 
-const QuizForm = () => {
+const getQuiz = `
+  query {
+    questions {
+      question
+      id
+      answers {
+        answer
+        id
+      }
+    }
+  }
+`;
+
+function Quiz() {
+  return (
+  <NhostProvider nhost={nhost}>
+    <QuizHome />
+  </NhostProvider>
+  );
+}
+
+const QuizHome = () => {
+  const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [score, setScore] = useState(null);
   const [correctAnswers, setCorrectAnswers] = useState([]);
   const [wrongAnswers, setWrongAnswers] = useState([]);
 
+  useEffect(() => {
+    async function fetchQuiz() {
+      try {
+        const { data } = await nhost.graphql.request(getQuiz);
+        console.log('data: ', data);
+
+        // Check data structure before mutate them
+        if (data?.questions) {
+          setQuestions(data.questions);
+        } else {
+          console.error("Quiz data is missing questions");
+        }
+      } catch (error) {
+        console.error('Error fetching quiz data:', error);
+      }
+    };
+    fetchQuiz();
+  }, []);
+
   const handleAnswerChange = (questionId, answerId) => {
     setAnswers((prevAnswers) => {
       const existingAnswer = prevAnswers.find((a) => a.question_id === questionId);
-      console.log('existingAnswer: ', existingAnswer);
       
       if (existingAnswer) {
         existingAnswer.answer_id = answerId;
@@ -23,7 +66,6 @@ const QuizForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const response = await fetch('/api/quiz', {
         method: 'POST',
@@ -39,10 +81,10 @@ const QuizForm = () => {
         throw new Error('Error submitting answers.');
       }
 
-      const data = await response.json();
-      setScore(data.score);
-      setCorrectAnswers(data.correctAnswers);
-      setWrongAnswers(data.wrongAnswers);
+      const responseData = await response.json();
+      setScore(responseData.score);
+      setCorrectAnswers(responseData.correctAnswers);
+      setWrongAnswers(responseData.wrongAnswers);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -52,30 +94,28 @@ const QuizForm = () => {
     <div>
       <h2>Quiz</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          <h3>Q1: How many planets are in our solar system?</h3>
-          <select
-            onChange={(e) =>
-              handleAnswerChange('a6d7a14c-58f0-4f33-9bf9-92580b6e1aa3', e.target.value)
-            }
-          >
-            <option value="4c19daac-3069-4f78-93c3-950d44ab2d74">6</option>
-            <option value="1939dd41-d73e-4bc8-bea3-c53d094eff66">8 Correct one</option>
-          </select>
-        </div>
-
-        <div>
-          <h3>Q2: Which 'The Lord of the Rings' movie has the highest IMDb rating?</h3>
-          <select
-            onChange={(e) =>
-              handleAnswerChange('2dd95c9b-a7fe-47a8-8f78-a92caf3de955', e.target.value)
-            }
-          >
-            <option value="bcc2909e-3b24-4b25-b2da-311ad4102dcf">The Fellowship of the Ring</option>
-            <option value="7ad7c745-af78-4d02-b4fa-4e2d3608d176">The Return of the King, Correct one</option>
-          </select>
-        </div>
-
+        {questions.length > 0 ? (
+          questions.map((question) => (
+            <div key={question.id}>
+              <h3>{question.question}</h3>
+              {question.answers?.map((answer) => (
+                <div key={answer.id}>
+                  <label>
+                    <input
+                      type="radio"
+                      name={`question-${question.id}`}
+                      value={answer.id}
+                      onChange={() => handleAnswerChange(question.id, answer.id)}
+                    />
+                    {answer.answer}
+                  </label>
+                </div>
+              ))}
+            </div>
+          ))
+        ) : (
+          <p>Loading questions...</p>
+        )}
         <button type="submit">Submit</button>
       </form>
 
@@ -100,4 +140,4 @@ const QuizForm = () => {
   );
 };
 
-export default QuizForm;
+export default Quiz;

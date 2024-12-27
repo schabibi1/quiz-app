@@ -27,7 +27,7 @@ const initScoreState = {
   score: 0,
 }
 
-function Quiz() {
+function QuizPoc() {
   return (
 	<NhostProvider nhost={nhost}>
 	  <QuizHome />
@@ -50,6 +50,7 @@ function QuizHome() {
   ]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [requestData, setRequestData] = useState(initRequestState);
+
   useEffect(() => {
 	async function fetchQuestions() {
 	  setLoading(true);
@@ -99,10 +100,9 @@ function QuizHome() {
 	// setRequestData in handleChange below mutates the requestData state
 	console.log(requestData)
 
-	const res = await fetch('http://localhost:3000/api/quiz', {
+	const res = await fetch('/api/quiz', {
 	  method: 'POST',
 	  headers: {
-		'Accept': 'application/json',
 		'Content-Type': 'application/json',
 	  },
 	  body: JSON.stringify([requestData]),
@@ -191,4 +191,4 @@ function QuizHome() {
   );
 }
 
-export default Quiz;
+export default QuizPoc;
