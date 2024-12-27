@@ -79,17 +79,18 @@ function QuizHome() {
       // updatedPlayers[currentPlayerIndex].score += 1;
       updatedPlayers[currentPlayerIndex].score = scores.score;
       setPlayers(updatedPlayers);
-      setScores(scores.score);// Not nutating scores
+      setScores(scores.score);// Not mutating scores
       console.log('scores: ', scores);// TODO: Mutate scores
     }
 
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setSelectedAnswer(null);
-    } else {
-      setQuizCompleted(true);
-    }
-    setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % players.length);
+    // // Temporary commented out to narrow down the error spot for Array.splice
+    // if (currentQuestionIndex < questions.length - 1) {
+    //   setCurrentQuestionIndex(currentQuestionIndex + 1);
+    //   setSelectedAnswer(null);
+    // } else {
+    //   setQuizCompleted(true);
+    // }
+    // setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % players.length);
   };
 
   const handleSubmit = async (e) => {
@@ -113,14 +114,29 @@ function QuizHome() {
   const handleChange = (e) => {
     e.preventDefault();
     setRequestData((prevData) => {
-      // Replacing existing element to mutate the original answer_id
-      prevData.splice(0, 1, {
+      // // Replacing existing element to mutate the original answer_id
+      // prevData.splice(0, 1, {
+      //   question_id: currentQuestion.id,
+      //   answer_id: e.target.value
+      // });
+
+      const updatedPrevData = Object.assign(prevData, {
         question_id: currentQuestion.id,
         answer_id: e.target.value
       });
-      console.log('...prevData: ', ...prevData);
-      return { ...prevData };
+      console.log('updatedPrevData: ', updatedPrevData);
+      return updatedPrevData;
     });
+
+    // Forcing to go to the next Q to narrow down the error spot
+    // Copied from handleSubmitAnswer()
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setSelectedAnswer(null);
+    } else {
+      setQuizCompleted(true);
+    }
+    setCurrentPlayerIndex((prevIndex) => (prevIndex + 1) % players.length);
   };
 
   if (quizCompleted) {
@@ -166,7 +182,7 @@ function QuizHome() {
           </div>
         <button
           onSubmit={handleSubmit}
-          onClick={handleSubmitAnswer}
+          // onClick={handleSubmitAnswer}
           disabled={!selectedAnswer || loading}
           className={!selectedAnswer ? "w-full py-3 bg-indigo-500/75 rounded-lg font-semibold my-6" : "w-full py-3 bg-indigo-500/75 hover:bg-indigo-500 rounded-lg font-semibold my-6"}
         >
