@@ -40,7 +40,6 @@ a {
 }
 
 label {
-  /* background-color: slategray; */
   padding: .5rem;
   border-radius: .2rem;
   cursor: pointer;
