@@ -1,6 +1,5 @@
 'use client'
 import Quiz from "./quiz/page"
-// import QuizPoc from "./quiz-poc/page"
 
 function App() {
   return (
@@ -11,7 +10,6 @@ function App() {
           <p className="text-center text-xl font-semibold text-white/60">Take turns to choose correct answers to score high!</p>
         </section>
         <Quiz />
-        {/* <QuizPoc /> */}
       </article>
     </main>
   )
