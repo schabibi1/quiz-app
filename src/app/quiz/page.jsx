@@ -126,10 +126,6 @@ const QuizHome = () => {
             {players.map((player) => (
               <li className="text-xl font-semibold text-white/60" key={player.name}>
                 {player.name}: {player.score} points
-                <br />
-                Correct Answers: {player.correctAnswers.length}
-                <br />
-                Wrong Answers: {player.wrongAnswers.length}
               </li>
             ))}
           </ul>
