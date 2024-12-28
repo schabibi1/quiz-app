@@ -40,21 +40,14 @@ a {
 }
 
 label {
-  background-color: slategray;
+  /* background-color: slategray; */
   padding: .5rem;
   border-radius: .2rem;
   cursor: pointer;
 }
 
 input {
-  /* 
-  TODO:
-  commented out for the quiz dir ver.
-  quiz-poc ver. needs below but will investigate later.
-  */
-  /* position: fixed;
-  opacity: 0;
-  pointer-events: none; */
+  margin: .5rem;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -117,51 +117,14 @@ const QuizHome = () => {
   };
 
   return (
-    <div>
-      <h2>Quiz</h2>
-      <div>
-        <input
-          type="text"
-          placeholder="Enter player name (e.g., Quiz Wizard)"
-          onBlur={(e) => addPlayer(e.target.value)}
-        />
-      </div>
-
-      {/* dynamically render Qs & answers */}
-      {questions.length > 0 && currentPlayer && (
-        <div>
-          <h3>{currentPlayer}'s Turn</h3>
-          <form onSubmit={handleSubmit}>
-            {questions.map((question) => (
-              <div key={question.id}>
-                <h4>{question.question}</h4>
-                {question.answers?.map((answer) => (
-                  <div key={answer.id}>
-                    <label>
-                      <input
-                        type="radio"
-                        name={`question-${question.id}`}
-                        value={answer.id}
-                        onChange={() => handleAnswerChange(question.id, answer.id)}
-                      />
-                      {answer.answer}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            ))}
-            <button type="submit">Submit</button>
-          </form>
-        </div>
-      )}
-
+    <section className="flex flex-col space-y-4 w-full mb-8">
       {/* display scores (all players) */}
       <div>
-        <h3>Scores</h3>
+        <h2 className="text-2xl font-semibold text-white my-6">Scores</h2>
         {players.length > 0 && (
           <ul>
             {players.map((player) => (
-              <li key={player.name}>
+              <li className="text-xl font-semibold text-white/60" key={player.name}>
                 {player.name}: {player.score} points
                 <br />
                 Correct Answers: {player.correctAnswers.length}
@@ -172,7 +135,59 @@ const QuizHome = () => {
           </ul>
         )}
       </div>
-    </div>
+
+      <div>
+        <label>
+          <input
+            type="text"
+            placeholder="Enter player name (e.g., Quiz Wizard)"
+            onBlur={(e) => addPlayer(e.target.value)}
+            className="w-full py-4 pl-5 ml-0 space-x-2 border-2 cursor-pointer border-white/10 rounded-xl"
+          />
+        </label>
+      </div>
+
+      {/* dynamically render Qs & answers */}
+      {questions.length > 0 && currentPlayer && (
+        <div className="flex flex-col space-y-4 w-full mb-8">
+          <h3 className="text-xl font-semibold text-white/60">
+            {currentPlayer}'s Turn
+          </h3>
+          <form onSubmit={handleSubmit}>
+            {questions.map((question) => (
+              <div
+                className="flex flex-col space-y-4 w-full"
+                key={question.id}
+              >
+                <h4 className="text-2xl font-semibold text-white my-6">
+                  {question.question}
+                </h4>
+                {question.answers?.map((answer) => (
+                  <div key={answer.id}>
+                    <label className="flex items-center w-full py-4 pl-5 ml-0 space-x-2 border-2 cursor-pointer border-white/10 rounded-xl bg-white/5 hover:bg-white/15">
+                      <input
+                        type="radio"
+                        name={`question-${question.id}`}
+                        value={answer.id}
+                        onChange={() => handleAnswerChange(question.id, answer.id)}
+                        className="w-6 h-6"
+                      />
+                      {answer.answer}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            ))}
+            <button
+              type="submit"
+              className="w-full py-3 bg-indigo-500/75 hover:bg-indigo-500 rounded-lg font-semibold my-6"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+      )}
+    </section>
   );
 };
 
