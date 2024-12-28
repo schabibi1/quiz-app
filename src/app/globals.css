@@ -47,9 +47,14 @@ label {
 }
 
 input {
-  position: fixed;
+  /* 
+  TODO:
+  commented out for the quiz dir ver.
+  quiz-poc ver. needs below but will investigate later.
+  */
+  /* position: fixed;
   opacity: 0;
-  pointer-events: none;
+  pointer-events: none; */
 }
 
 @media (prefers-color-scheme: dark) {

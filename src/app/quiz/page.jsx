@@ -27,17 +27,15 @@ function Quiz() {
 const QuizHome = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
-  const [score, setScore] = useState(null);
-  const [correctAnswers, setCorrectAnswers] = useState([]);
-  const [wrongAnswers, setWrongAnswers] = useState([]);
+  const [players, setPlayers] = useState([]);
+  const [currentPlayer, setCurrentPlayer] = useState(null);
 
   useEffect(() => {
     async function fetchQuiz() {
       try {
         const { data } = await nhost.graphql.request(getQuiz);
-        console.log('data: ', data);
 
-        // Check data structure before mutate them
+        // check data structure before mutate them
         if (data?.questions) {
           setQuestions(data.questions);
         } else {
@@ -59,7 +57,6 @@ const QuizHome = () => {
       } else {
         prevAnswers.push({ question_id: questionId, answer_id: answerId });
       }
-      console.log('prevAnswers: ', prevAnswers);
       return [...prevAnswers];
     });
   };
@@ -74,68 +71,107 @@ const QuizHome = () => {
         },
         body: JSON.stringify({ solutions: answers }),
       });
-      console.log('response: ', response); 
-      console.log('answers: ', answers);
 
       if (!response.ok) {
         throw new Error('Error submitting answers.');
       }
 
       const responseData = await response.json();
-      setScore(responseData.score);
-      setCorrectAnswers(responseData.correctAnswers);
-      setWrongAnswers(responseData.wrongAnswers);
+      if (!responseData) {
+        throw new Error('No data returned');
+      }
+
+      // update player's score & results
+      setPlayers((prevPlayers) => {
+        return prevPlayers.map(player => {
+          if (player.name === currentPlayer) {
+            // return new player obj & avoid mutating state directly
+            return {
+              ...player,
+              score: responseData.score,
+              correctAnswers: responseData.correctAnswers,
+              wrongAnswers: responseData.wrongAnswers
+            };
+          }
+          return player;
+        });
+      });
+
+      // clear answers for next player & reset current player
+      setAnswers([]);
+      // reset current player after submission
+      setCurrentPlayer(null);
     } catch (error) {
       console.error('Error:', error);
     }
   };
 
+  // add new player (Player 1, Player 2, etc.)
+  const addPlayer = (name) => {
+    // add a player & update players state immutably
+    setPlayers((prevPlayers) => [
+      ...prevPlayers, 
+      { name, score: 0, correctAnswers: [], wrongAnswers: [] }
+    ]);
+    setCurrentPlayer(name);
+  };
+
   return (
     <div>
       <h2>Quiz</h2>
-      <form onSubmit={handleSubmit}>
-        {questions.length > 0 ? (
-          questions.map((question) => (
-            <div key={question.id}>
-              <h3>{question.question}</h3>
-              {question.answers?.map((answer) => (
-                <div key={answer.id}>
-                  <label>
-                    <input
-                      type="radio"
-                      name={`question-${question.id}`}
-                      value={answer.id}
-                      onChange={() => handleAnswerChange(question.id, answer.id)}
-                    />
-                    {answer.answer}
-                  </label>
-                </div>
-              ))}
-            </div>
-          ))
-        ) : (
-          <p>Loading questions...</p>
-        )}
-        <button type="submit">Submit</button>
-      </form>
+      <div>
+        <input
+          type="text"
+          placeholder="Enter player name (e.g., Quiz Wizard)"
+          onBlur={(e) => addPlayer(e.target.value)}
+        />
+      </div>
 
-      {score !== null && (
+      {/* dynamically render Qs & answers */}
+      {questions.length > 0 && currentPlayer && (
         <div>
-          <h3>Your Score: {score}</h3>
-          <h4>Correct Answers:</h4>
-          <ul>
-            {correctAnswers.map((answer) => (
-              <li key={answer.question_id}>{answer.question_id}</li>
+          <h3>{currentPlayer}'s Turn</h3>
+          <form onSubmit={handleSubmit}>
+            {questions.map((question) => (
+              <div key={question.id}>
+                <h4>{question.question}</h4>
+                {question.answers?.map((answer) => (
+                  <div key={answer.id}>
+                    <label>
+                      <input
+                        type="radio"
+                        name={`question-${question.id}`}
+                        value={answer.id}
+                        onChange={() => handleAnswerChange(question.id, answer.id)}
+                      />
+                      {answer.answer}
+                    </label>
+                  </div>
+                ))}
+              </div>
             ))}
-          </ul>
-          <h4>Wrong Answers:</h4>
-          <ul>
-            {wrongAnswers.map((answer) => (
-              <li key={answer.question_id}>{answer.question_id}</li>
-            ))}
-          </ul>
+            <button type="submit">Submit</button>
+          </form>
         </div>
       )}
+
+      {/* display scores (all players) */}
+      <div>
+        <h3>Scores</h3>
+        {players.length > 0 && (
+          <ul>
+            {players.map((player) => (
+              <li key={player.name}>
+                {player.name}: {player.score} points
+                <br />
+                Correct Answers: {player.correctAnswers.length}
+                <br />
+                Wrong Answers: {player.wrongAnswers.length}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
