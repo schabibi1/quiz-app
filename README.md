@@ -1,4 +1,4 @@
-# nhost Quiz App
+# Quiz App
 A multiplayer quiz app powered by nhost, Next.js and AWS Lambda.
 Two players can play on the same machine's browser to answer by taking turns. Scores will display when all answers were selected.
 
@@ -63,7 +63,7 @@ npm run dev
 - [x] Unique player name registration feature to display on the score
 - [x] Next.js' [Router Handles](https://nextjs.org/docs/app/building-your-application/routing/route-handlers) Function to handle tasks (i.e. Data upload, request and accessing database, etc) for better performance. Functions are only executed when specified route is accessed. → Minimum serverside processing
 
-## Future Improvements
+## Roadmap
 
 - [ ] TypeScript support
 - [ ] Style improvement
@@ -74,5 +74,3 @@ npm run dev
 - [ ] Count down timer
 - [ ] "Previous" button to go back & update the previous quesion's answer
 - [ ] An input or button element to confirm user name registration before displaying questions
-- [ ] E2E & Unit testing
-- [ ] GitHub actions to set up the correct toolchain for build environment, or set up the authentication to the cloud provider

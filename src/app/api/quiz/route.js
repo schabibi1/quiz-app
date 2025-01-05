@@ -13,7 +13,7 @@ export async function POST(req) {
     }
 
     // Define the AWS Lambda endpoint URL (API Gateway URL)
-    const endpoint = "https://nemoeuuycytnxxdtqnlg.functions.eu-central-1.nhost.run/v1/evaluate";
+    const endpoint = process.env.LAMBDA_EVALUATE_ENDPOINT;
 
     // Send the data to the AWS Lambda function via POST request
     const response = await fetch(endpoint, {
